@@ -97,20 +97,16 @@
 
 /* vars:*/
 
+#if CHANGEABLE_DEBUG_LEVEL
 extern int *debug;
+#else
+extern int debug;
+#endif
 extern int log_stderr;
 extern int log_facility;
 extern char* log_name;
 extern char ctime_buf[];
 
-/*
- * must be called after init_multi_proc_support()
- * must be called once for each OpenSIPS process
- */
-int init_debug(void);
-
-/* must be called once, before the "pt" process table is freed */
-void cleanup_debug(void);
 
 int dp_my_pid(void);
 
@@ -118,22 +114,9 @@ void dprint (char* format, ...);
 
 int str2facility(char *s);
 
-/* set the current and default log levels for all OpenSIPS processes */
-inline void set_global_debug_level(int level);
+void set_proc_debug_level(int level);
 
-/* set the log level of the current process */
-inline void set_proc_debug_level(int level);
-
-/*
- * set the (default) log level of a given process
- *
- * Note: the index param is not validated!
- */
-inline void __set_proc_debug_level(int proc_idx, int level);
-inline void __set_proc_default_debug(int proc_idx, int level);
-
-/* changes the logging level to the default value for the current process */
-inline void reset_proc_debug_level(void);
+void reset_proc_debug_level(void);
 
 inline static char* dp_time(void)
 {
@@ -146,7 +129,13 @@ inline static char* dp_time(void)
 	return ctime_buf+4;  /* remove name of day*/
 }
 
-#define is_printable(_level)  (((int)(*debug)) >= ((int)(_level)))
+
+
+#if CHANGEABLE_DEBUG_LEVEL
+	#define is_printable(_level)  ((*debug)>=(_level))
+#else
+	#define is_printable(_level)  (debug>=(_level))
+#endif
 
 #if defined __GNUC__
 	#define __DP_FUNC  __FUNCTION__

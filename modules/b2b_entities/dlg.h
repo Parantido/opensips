@@ -140,7 +140,6 @@ typedef struct client_info
 	str local_contact;
 	unsigned int cseq;
 	struct socket_info* send_sock;
-	struct usr_avp *avps;
 }client_info_t;
 
 typedef struct b2b_entry

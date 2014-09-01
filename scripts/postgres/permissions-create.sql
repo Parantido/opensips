@@ -10,4 +10,3 @@ CREATE TABLE address (
     context_info VARCHAR(32) DEFAULT NULL
 );
 
-ALTER SEQUENCE address_id_seq MAXVALUE 2147483647 CYCLE;

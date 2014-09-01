@@ -23,7 +23,8 @@
 		<type>unsigned int</type>
 		<size>&table_id_len;</size>
 		<autoincrement/>
-		<primary/>
+		<natural/>
+		<unique/>
 		<type db="dbtext">int,auto</type>
 		<description>Flow unique ID in DB
 		</description>
@@ -33,6 +34,7 @@
 		<name>flowid</name>
 		<type>string</type>
 		<size>64</size>
+		<primary/>
 		<description>The unique ID of the flow in the
 		Call Center module - to be used to identify the
 		flow/queue in the module and from outside the module;
@@ -91,11 +93,5 @@
 		flow. IMPORTANT - this message must cycle and media
 		server must never hung up on it.</description>
 	</column>
-
-    <index>
-        <name>unique_flowid</name>
-        <colref linkend="flowid"/>
-        <unique/>
-    </index>
 
 </table>

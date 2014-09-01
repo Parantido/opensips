@@ -207,10 +207,8 @@ static pv_export_t mod_items[] = {
 
 struct module_exports exports = {
 	"cfgutils",
-	MOD_TYPE_DEFAULT,/* class of this module */
 	MODULE_VERSION,  /* module version */
 	DEFAULT_DLFLAGS, /* dlopen flags */
-	NULL,            /* OpenSIPS module dependencies */
 	cmds,        /* exported functions */
 	params,      /* exported parameters */
 	0,           /* exported statistics */

@@ -179,13 +179,11 @@ void destroy_script_locks(void)
 		lock_entry = static_locks;
 		static_locks = static_locks->next;
 
-		if (lock_entry->lock)
-			lock_dealloc(lock_entry->lock);
+		lock_dealloc(lock_entry->lock);
 		shm_free(lock_entry);
 	}
 
 	/* Free all dynamic locks  */
-	if (dynamic_locks)
-		lock_set_dealloc(dynamic_locks);
+	lock_set_dealloc(dynamic_locks);
 }
 

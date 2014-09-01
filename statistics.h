@@ -103,7 +103,6 @@ typedef struct stat_export_ {
 char *build_stat_name( str* prefix, char *var_name);
 
 int init_stats_collector();
-int stats_are_ready(); /* for code which is statistics-dependent */
 
 int register_udp_load_stat(str *name, stat_var **ctx, int children);
 int register_tcp_load_stat(stat_var **ctx);
@@ -111,17 +110,14 @@ int register_tcp_load_stat(stat_var **ctx);
 void destroy_stats_collector();
 
 #define register_stat(_mod,_name,_pvar,_flags) \
-		register_stat2(_mod,_name,_pvar,_flags, NULL, 0)
+		register_stat2(_mod,_name,_pvar,_flags, 0)
 
 int register_stat2( char *module, char *name, stat_var **pvar,
-		unsigned  short flags, void* context, int unsafe);
+		unsigned  short flags, void* context);
 
 int register_dynamic_stat( str *name, stat_var **pvar);
 
-#define register_module_stats(mod, stats) \
-	__register_module_stats(mod, stats, 0)
-
-int __register_module_stats(char *module, stat_export_t *stats, int unsafe);
+int register_module_stats(char *module, stat_export_t *stats);
 
 int clone_pv_stat_name(str *name, str *clone);
 
@@ -150,7 +146,6 @@ extern gen_lock_t *stat_lock;
 	#define init_stats_collector()  0
 	#define destroy_stats_collector()
 	#define register_module_stats(_mod,_stats) 0
-	#define __register_module_stats(_mod,_stats, unsafe) 0
 	#define register_stat( _mod, _name, _pvar, _flags) 0
 	#define register_dynamic_stat( _name, _pvar) 0
 	#define get_stat( _name )  0
@@ -158,7 +153,6 @@ extern gen_lock_t *stat_lock;
 	#define get_stat_var_from_num_code( _n_code, _in_code) NULL
 	#define register_udp_load_stat( _a, _b, _c) 0
 	#define register_tcp_load_stat( _a)     0
-	#define stats_are_ready() 0
 	#define clone_pv_stat_name( _name, _clone) 0
 #endif
 

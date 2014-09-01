@@ -5,22 +5,8 @@
 include ../../Makefile.defs
 auto_gen=
 NAME=event_rabbitmq.so
-
-ifeq ($(CROSS_COMPILE),)
-RABBITMQ_BUILDER = $(shell \
-	if pkg-config --exists librabbitmq; then \
-		echo 'pkg-config librabbitmq'; \
-	fi)
-endif
-
-ifeq ($(RABBITMQ_BUILDER),)
-	DEFS+=-I$(LOCALBASE)/include
-	LIBS=-L$(LOCALBASE)/lib -lrabbitmq
-else
-	DEFS += $(shell $(RABBITMQ_BUILDER) --cflags)
-	LIBS += $(shell $(RABBITMQ_BUILDER) --libs)
-endif
-
+DEFS+=-I$(LOCALBASE)/include
+LIBS=-L$(LOCALBASE)/lib -lrabbitmq
 
 include ../../Makefile.modules
 

@@ -11,6 +11,5 @@ CREATE TABLE subscriber (
     CONSTRAINT subscriber_account_idx UNIQUE (username, domain)
 );
 
-ALTER SEQUENCE subscriber_id_seq MAXVALUE 2147483647 CYCLE;
 CREATE INDEX subscriber_username_idx ON subscriber (username);
 

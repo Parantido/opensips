@@ -66,7 +66,11 @@ void memtest()
 	char *p[TEST_RUN];
 	int t;
 
-	set_global_debug_level(7);
+#ifdef CHANGEABLE_DEBUG_LEVEL
+	*debug=7;
+#else
+	debug=7;
+#endif
 	log_stderr=1;
 
 	printf("entering test\n");

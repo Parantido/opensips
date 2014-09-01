@@ -182,7 +182,6 @@ int t_uac(str* method, str* headers, str* body, dlg_t* dialog,
 	struct socket_info *send_sock, *new_send_sock;
 	str h_to, h_from, h_cseq, h_callid;
 	struct proxy_l *proxy, *new_proxy;
-	unsigned short dst_changed;
 
 	ret=-1;
 
@@ -307,15 +306,13 @@ int t_uac(str* method, str* headers, str* body, dlg_t* dialog,
 			set_avp_list( backup );
 
 			/* check for changes - if none, do not regenerate the buffer */
-			dst_changed = 1;
-			if (req->new_uri.s || req->force_send_socket!=dialog->send_sock ||
+			if (req->new_uri.s || req->add_rm || req->body_lumps ||
 			req->dst_uri.len != dialog->hooks.next_hop->len ||
-			memcmp(req->dst_uri.s,dialog->hooks.next_hop->s,req->dst_uri.len) ||
-			(dst_changed=0)==0 || req->add_rm || req->body_lumps){
+			memcmp(req->dst_uri.s,dialog->hooks.next_hop->s,req->dst_uri.len)){
 
 				new_send_sock = NULL;
 				/* do we also need to change the destination? */
-				if (dst_changed) {
+				if (req->dst_uri.s || req->new_uri.s) {
 					/* calculate the socket corresponding to next hop */
 					new_proxy = uri2proxy(
 						req->dst_uri.s ? &(req->dst_uri) : &req->new_uri,

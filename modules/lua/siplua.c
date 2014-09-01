@@ -78,10 +78,8 @@ static mi_export_t mi_cmds[] = {
  */
 struct module_exports exports = {
   "lua",
-  MOD_TYPE_DEFAULT,/* class of this module */
   MODULE_VERSION,
   RTLD_NOW | RTLD_GLOBAL,
-  NULL,     /* OpenSIPS module dependencies */
   cmds,		/* Exported functions */
   params,	/* Exported parameters */
   0,		/* exported statistics */

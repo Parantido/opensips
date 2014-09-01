@@ -80,6 +80,7 @@ build_rt_data( void );
 
 int
 add_carrier(
+	int db_id,
 	char *id,
 	int flags,
 	char *gwlist,

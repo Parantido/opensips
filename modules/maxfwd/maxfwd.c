@@ -78,10 +78,8 @@ struct module_exports maxfwd_exports = {
 struct module_exports exports= {
 #endif
 	"maxfwd",
-	MOD_TYPE_DEFAULT,/* class of this module */
 	MODULE_VERSION,
 	DEFAULT_DLFLAGS, /* dlopen flags */
-	NULL,            /* OpenSIPS module dependencies */
 	cmds,
 	params,
 	0,          /* exported statistics */
@@ -131,7 +129,7 @@ static int fixup_maxfwd_header(void** param, int param_no)
 			*param=(void*)code;
 			return 0;
 		}else{
-			LM_ERR("bad number <%s>\n",(char*)(*param));
+			LM_ERR("bad  number <%s>\n",(char*)(*param));
 			return E_UNSPEC;
 		}
 	}

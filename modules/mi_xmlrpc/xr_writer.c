@@ -49,11 +49,6 @@ int xr_writer_init( unsigned int size )
 	return 0;
 }
 
-void xr_writer_reset(void)
-{
-	*reply_buffer = '\0';
-}
-
 #ifndef XMLRPC_HAS_FORCE_CHARS
 
 #define XMLRPC_NONXML_CHAR 0x7F
@@ -222,7 +217,10 @@ static int recur_flush_response_array(xmlrpc_env * env, struct mi_node *tree,
 			kid = kid->next;
 			tree->kids = kid;
 
-			free_mi_node(tmp);
+			if(!tmp->kids){
+				/* this node does not have any kids */
+				free_mi_node(tmp);
+			}
 		}
 		else{
 			/* the node will have more kids => to keep the tree shape, do not
@@ -288,11 +286,11 @@ static int recur_build_response( xmlrpc_env * env, struct mi_node * tree,
 					LM_ERR("failed to get MI node data!\n");
 					return -1;
 				}
-			}
 
-			/* we are sure that this node has been written
-		 	* => avoid writing it again */
-			tree->flags |= MI_WRITTEN;
+				/* we are sure that this node has been written
+		 		* => avoid writing it again */
+				tree->flags |= MI_WRITTEN;
+			}
 		}
 
 		if ( tree->kids ) {
@@ -307,11 +305,9 @@ static int recur_build_response( xmlrpc_env * env, struct mi_node * tree,
 char* xr_build_response( xmlrpc_env * env, struct mi_root * tree )
 {
 	str buf;
-	int len;
 
-	len = strlen(reply_buffer);
-	buf.s = reply_buffer + len;
-	buf.len = reply_buffer_len - len;
+	buf.s = reply_buffer;
+	buf.len = reply_buffer_len;
 
 	if ( tree->code<200 || tree->code>=300 ){
 		LM_DBG("command processing failure: %s\n", tree->reason.s);
@@ -338,15 +334,6 @@ static int recur_flush_response(xmlrpc_env * env, struct mi_node *tree, str *buf
 {
 	struct mi_node *kid, *tmp;
 	int ret;
-
-	if (!rpl_opt) {
-		if (recur_build_response(env, tree, buf) != 0) {
-			LM_ERR("failed to read from the MI tree!\n");
-			return -1;
-		}
-
-		return 0;
-	}
 
 	for(kid = tree->kids ; kid ; ){
 		/* write the current kid */
@@ -384,7 +371,10 @@ static int recur_flush_response(xmlrpc_env * env, struct mi_node *tree, str *buf
 			kid = kid->next;
 			tree->kids = kid;
 
-			free_mi_node(tmp);
+			if(!tmp->kids){
+				/* this node does not have any kids */
+				free_mi_node(tmp);
+			}
 		}
 		else{
 			/* the node will have more kids => to keep the tree shape, do not
@@ -399,11 +389,9 @@ static int recur_flush_response(xmlrpc_env * env, struct mi_node *tree, str *buf
 char* xr_flush_response( xmlrpc_env * env, struct mi_root * tree )
 {
 	str buf;
-	int len;
 
-	len = strlen(reply_buffer);
-	buf.s = reply_buffer + len;
-	buf.len = reply_buffer_len - len;
+	buf.s = reply_buffer;
+	buf.len = reply_buffer_len;
 
 	if ( tree->code<200 || tree->code>=300 ){
 		LM_DBG("command processing failure: %s\n", tree->reason.s);

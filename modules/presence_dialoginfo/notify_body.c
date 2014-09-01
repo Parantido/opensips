@@ -57,28 +57,22 @@ void free_xml_body(char* body)
 		xmlFree(body);
 }
 
-/* Joins user and domain into "sip:USER@DOMAIN".
- * dst must fit at least MAX_URI_SIZE+1 characters! */
-static inline int sipuri_cat(char* dst, const str* user, const str* domain) {
-	if ((4 + user->len + 1 + domain->len) > MAX_URI_SIZE) {
-	        LM_ERR("entity URI too long, maximum=%d\n", MAX_URI_SIZE);
-		return -1;
-	}
-	memcpy(dst, "sip:", 4);
-	memcpy(dst + 4, user->s, user->len);
-	dst[user->len + 4] = '@';
-	memcpy(dst + user->len + 5, domain->s, domain->len);
-	dst[user->len + 5 + domain->len] = '\0';
-	return 0;
-}
 
 str* dlginfo_agg_nbody(str* pres_user, str* pres_domain, str** body_array, int n, int off_index)
 {
 	str* n_body= NULL;
 	char pres_uri_char[MAX_URI_SIZE+1];
 
-	if (sipuri_cat(pres_uri_char, pres_user, pres_domain) != 0)
+	if ((pres_user->len + pres_domain->len + 5) > MAX_URI_SIZE) {
+		LM_ERR("entity URI too long, maximum=%d\n", MAX_URI_SIZE);
 		return NULL;
+	}
+	memcpy(pres_uri_char, "sip:", 4);
+	memcpy(pres_uri_char + 4, pres_user->s, pres_user->len);
+	pres_uri_char[pres_user->len + 4] = '@';
+	memcpy(pres_uri_char + pres_user->len + 5, pres_domain->s, pres_domain->len);
+	pres_uri_char[pres_user->len + 5 + pres_domain->len] = '\0';
+
 	LM_DBG("[pres_uri] %s (%d), [n]=%d\n", pres_uri_char,
 		pres_user->len + 5 + pres_domain->len, n);
 
@@ -123,7 +117,7 @@ str* agregate_xmls(str* pres_user, str* pres_domain, str** body_array, int n, in
 	int winner_priority = -1, priority ;
 	xmlNodePtr winner_dialog_node = NULL ;
 	str *body= NULL;
-	char buf[MAX_URI_SIZE+1];
+    char buf[MAX_URI_SIZE+1];
 
 	LM_DBG("[pres_user]=%.*s [pres_domain]= %.*s, [n]=%d\n",
 			pres_user->len, pres_user->s, pres_domain->len, pres_domain->s, n);
@@ -169,8 +163,15 @@ str* agregate_xmls(str* pres_user, str* pres_domain, str** body_array, int n, in
 	/* LM_DBG("number of bodies in total [n]=%d, number of useful bodies [j]=%d\n", n, j ); */
 
 	/* create the new NOTIFY body  */
-	if (sipuri_cat(buf, pres_user, pres_domain) != 0)
-		goto error;
+    if ( (pres_user->len + pres_domain->len + 1) > MAX_URI_SIZE) {
+        LM_ERR("entity URI too long, maximum=%d\n", MAX_URI_SIZE);
+        return NULL;
+    }
+	memcpy(buf, "sip:", 4);
+	memcpy(buf+4, pres_user->s, pres_user->len);
+	buf[pres_user->len+4] = '@';
+	memcpy(buf + pres_user->len + 5, pres_domain->s, pres_domain->len);
+	buf[pres_user->len + 5 + pres_domain->len]= '\0';
 
     doc = xmlNewDoc(BAD_CAST "1.0");
     if(doc==0)
@@ -359,21 +360,37 @@ str* build_dialoginfo(str* pres_user, str* pres_domain)
 	xmlNodePtr state_node = NULL;
 
 	str *body= NULL;
-	str pres_uri;
+	str *pres_uri= NULL;
 	char buf[MAX_URI_SIZE+1];
 
-	if (sipuri_cat(buf, pres_user, pres_domain) != 0)
+	if ( (pres_user->len + pres_domain->len + 1) > MAX_URI_SIZE) {
+		LM_ERR("entity URI too long, maximum=%d\n", MAX_URI_SIZE);
 		return NULL;
-	pres_uri.s = buf;
-	pres_uri.len = 4 + pres_user->len + 1 + pres_domain->len;
-	LM_DBG("[pres_uri] %.*s\n", pres_uri.len, pres_uri.s);
+	}
+	memcpy(buf, "sip:", 4);
+	memcpy(buf+4, pres_user->s, pres_user->len);
+	buf[pres_user->len+4] = '@';
+	memcpy(buf + pres_user->len + 5, pres_domain->s, pres_domain->len);
+	buf[pres_user->len + 5 + pres_domain->len]= '\0';
 
-	if (pres_contains_presence(&pres_uri) < 0) {
+	pres_uri = (str*)pkg_malloc(sizeof(str));
+	if(pres_uri == NULL)
+	{
+		LM_ERR("while allocating memory\n");
+		return NULL;
+	}
+	memset(pres_uri, 0, sizeof(str));
+	pres_uri->s = buf;
+	pres_uri->len = pres_user->len + 5 + pres_domain->len;
+
+	LM_DBG("[pres_uri] %.*s\n", pres_uri->len, pres_uri->s);
+
+	if ( pres_contains_presence(pres_uri)<0 ) {
 		LM_DBG("No record exists in hash_table\n");
 		goto error;
 	}
 
-	/* create the Publish body */
+	/* create the Publish body  */
 	doc = xmlNewDoc(BAD_CAST "1.0");
 	if(doc==0)
 		goto error;
@@ -398,10 +415,8 @@ str* build_dialoginfo(str* pres_user, str* pres_domain)
 		LM_ERR("while adding child [dialog]\n");
 		goto error;
 	}
-
-	/* reuse buf for user-part only */
 	memcpy(buf, pres_user->s, pres_user->len);
-	buf[pres_user->len] = '\0';
+	buf[pres_user->len]= '\0';
 
 	xmlNewProp(dialog_node, BAD_CAST "id", BAD_CAST buf);
 
@@ -429,6 +444,10 @@ str* build_dialoginfo(str* pres_user, str* pres_domain)
 	xmlCleanupParser();
 	return body;
 error:
+	if ( pres_uri )
+	{
+		pkg_free(pres_uri);
+	}
 	if(body)
 	{
 		if(body->s)

@@ -210,8 +210,7 @@ ser_realloc(void *ptr, size_t size)
 static void
 ser_free(void *ptr)
 {
-	if (ptr)
-		shm_free(ptr);
+	shm_free(ptr);
 }
 
 

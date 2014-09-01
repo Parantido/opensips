@@ -291,7 +291,6 @@ IP address-to-location lookup capability to OpenSIPS scripts.
 Summary:  MySQL Storage Support for the OpenSIPS
 Group:    System Environment/Daemons
 Requires: %{name} = %{version}-%{release}
-Requires: mysql-libs
 
 %description  mysql
 The %{name}-mysql package contains the MySQL plugin for %{name}, which allows
@@ -359,7 +358,6 @@ inside OpenSIPS's tables.
 Summary:  PostgreSQL Storage Support for the OpenSIPS
 Group:    System Environment/Daemons
 Requires: %{name} = %{version}-%{release}
-Requires: postgresql-libs
 
 %description  postgresql
 The %{name}-postgresql package contains the PostgreSQL plugin for %{name},

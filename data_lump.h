@@ -58,19 +58,11 @@ extern int init_lump_flags;
 	}while(0)
 
 
-/*! \brief adds a header to the end
- * WARNING: currently broken! 
- *   - lumps_len() needs to properly handle LUMP_ADD along the main chain of
- *     lumps before we can use this
- */
+/*! \brief adds a header to the end */
 struct lump* append_new_lump(struct lump** list, char* new_hdr,
 		unsigned int len, enum _hdr_types_t type);
 
-/*! \brief inserts a header to the beginning
- * WARNING: currently broken! 
- *   - lumps_len() needs to properly handle LUMP_ADD along the main chain of
- *     lumps before we can use this
- */
+/*! \brief inserts a header to the beginning */
 struct lump* insert_new_lump(struct lump** list, char* new_hdr,
 		unsigned int len, enum _hdr_types_t type);
 /*! \brief inserts a header to the beginning - after */
@@ -104,7 +96,7 @@ struct lump* del_lump(struct sip_msg* msg, unsigned int offset,
 	unsigned int len, enum _hdr_types_t type);
 /*! \brief set an anchor */
 struct lump* anchor_lump(struct sip_msg* msg, unsigned int offset,
-	enum _hdr_types_t type);
+	unsigned int len, enum _hdr_types_t type);
 
 
 

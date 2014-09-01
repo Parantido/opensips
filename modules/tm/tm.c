@@ -329,10 +329,8 @@ struct module_exports tm_exports = {
 struct module_exports exports= {
 #endif
 	"tm",      /* module name*/
-	MOD_TYPE_DEFAULT,/* class of this module */
 	MODULE_VERSION,
 	DEFAULT_DLFLAGS, /* dlopen flags */
-	NULL,            /* OpenSIPS module dependencies */
 	cmds,      /* exported functions */
 	params,    /* exported variables */
 	mod_stats, /* exported statistics */
@@ -451,7 +449,7 @@ static int fixup_phostport2proxy(void** param, int param_no)
 	str host;
 
 	if (param_no!=1) {
-		LM_CRIT("called with more than one parameter\n");
+		LM_CRIT("called with more than  one parameter\n");
 		return E_BUG;
 	}
 
@@ -685,8 +683,8 @@ static int script_init( struct sip_msg *foo, void *bar)
 	set_t(T_UNDEFINED);
 	reset_cancelled_t();
 	reset_e2eack_t();
-	fr_timeout = timer_id2timeout[FR_TIMER_LIST];
-	fr_inv_timeout = timer_id2timeout[FR_INV_TIMER_LIST];
+	unset_timeout(fr_timeout);
+	unset_timeout(fr_inv_timeout);
 
 	/* reset the kill reason status */
 	reset_kr();
@@ -716,7 +714,7 @@ static int mod_init(void)
 		return -1;
 	}
 
-	fix_flag_name(minor_branch_flag_str, minor_branch_flag);
+	fix_flag_name(&minor_branch_flag_str, minor_branch_flag);
 
 	minor_branch_flag =
 		get_flag_id_by_name(FLAG_TYPE_BRANCH, minor_branch_flag_str);
@@ -1188,27 +1186,22 @@ static inline int t_relay_inerr2scripterr(void)
 
 inline static int w_t_relay( struct sip_msg  *p_msg , char *proxy, char *flags)
 {
-	struct proxy_l *p = NULL;
 	struct cell *t;
 	int ret;
 
 	t=get_t();
 
-	if (proxy && (p=clone_proxy((struct proxy_l*)proxy))==0) {
-		LM_ERR("failed to clone proxy, dropping packet\n");
-		return -1;
-	}
-
 	if (!t || t==T_UNDEFINED) {
 		/* no transaction yet */
 		if (route_type==FAILURE_ROUTE) {
-			LM_CRIT("BUG - undefined transaction in failure route\n");
+			LM_CRIT(" BUG - undefined transaction in failure route\n");
 			return -1;
 		}
-		ret = t_relay_to( p_msg, p, (int)(long)flags );
+		ret = t_relay_to( p_msg, (struct proxy_l *)proxy, (int)(long)flags );
 		if (ret<0) {
 			ret = t_relay_inerr2scripterr();
 		}
+		return ret?ret:1;
 	} else {
 		/* transaction already created */
 
@@ -1226,18 +1219,13 @@ inline static int w_t_relay( struct sip_msg  *p_msg , char *proxy, char *flags)
 		if (((int)(long)flags)&TM_T_REPLY_reason_FLAG)
 			t->flags|=T_CANCEL_REASON_FLAG;
 
-		ret = t_forward_nonack( t, p_msg, p);
+		ret = t_forward_nonack( t, p_msg, (struct proxy_l *)proxy);
 		if (ret<=0 ) {
 			LM_ERR("t_forward_nonack failed\n");
 			ret = t_relay_inerr2scripterr();
 		}
+		return ret?ret:1;
 	}
-
-	if (p) {
-		free_proxy(p);
-		pkg_free(p);
-	}
-	return ret?ret:1;
 
 route_err:
 	LM_CRIT("unsupported route type: %d\n", route_type);

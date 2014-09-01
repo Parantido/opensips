@@ -50,8 +50,8 @@
 int
 sdp_mangle_port (struct sip_msg *msg, char *offset, char *unused)
 {
-	int old_content_length, new_content_length, oldlen, err, oldPort, newPort,
-		diff, offsetValue,len,off,ret,need_to_deallocate;
+	int oldContentLength, newContentLength, oldlen, err, oldPort, newPort,
+		diff, offsetValue,len,off,ret,needToDealocate;
 	struct lump *l;
 	regmatch_t pmatch;
 	regex_t *re;
@@ -76,7 +76,7 @@ sdp_mangle_port (struct sip_msg *msg, char *offset, char *unused)
 		return -2;
 	}
 
-	old_content_length = get_content_length(msg);
+	oldContentLength = get_content_length(msg);
 
 	if (offset == NULL)
 		return -14;
@@ -102,7 +102,7 @@ sdp_mangle_port (struct sip_msg *msg, char *offset, char *unused)
 	ret = -1;
 
 	/* try to use pre-compiled expressions */
-	need_to_deallocate = 0;
+	needToDealocate = 0;
 	if (portExpression != NULL)
 		{
 		re = portExpression;
@@ -118,7 +118,7 @@ sdp_mangle_port (struct sip_msg *msg, char *offset, char *unused)
 				LM_ERR("unable to allocate re\n");
 				return -4;
 				}
-			need_to_deallocate = 1;
+			needToDealocate = 1;
 			if ((regcomp (re, key, REG_EXTENDED)) != 0)
 				{
 				LM_ERR("unable to compile %s \n",key);
@@ -252,7 +252,7 @@ continue1:
 		begin = begin + pmatch.rm_eo;
 
 	}			/* while  */
-	if (need_to_deallocate)
+	if (needToDealocate)
 		{
 		regfree (re);
 		pkg_free(re);
@@ -263,8 +263,8 @@ continue1:
 
 	if (diff != 0)
 	{
-		new_content_length = old_content_length + diff;
-		patch_content_length (msg, new_content_length);
+		newContentLength = oldContentLength + diff;
+		patch_content_length (msg, newContentLength);
 	}
 
 #ifdef DEBUG
@@ -278,13 +278,12 @@ continue1:
 int
 sdp_mangle_ip (struct sip_msg *msg, char *oldip, char *newip)
 {
-	int i, old_content_length, new_content_length;
-	int diff, oldlen, len, off, ret, need_to_deallocate;
+	int i, oldContentLength, newContentLength, diff, oldlen,len,off,ret,needToDealocate;
 	unsigned int mask, address, locatedIp;
 	struct lump *l;
 	regmatch_t pmatch;
 	regex_t *re;
-	char *s, *pos, *begin, *key;
+	char *s, *pos,*begin,*key;
 	char buffer[16];	/* 123.456.789.123\0 */
 	str body;
 
@@ -310,7 +309,7 @@ sdp_mangle_ip (struct sip_msg *msg, char *oldip, char *newip)
 		return -2;
 	}
 
-	old_content_length = get_content_length(msg);
+	oldContentLength = get_content_length(msg);
 
 	/* checking oldip */
 	if (oldip == NULL)
@@ -350,7 +349,7 @@ sdp_mangle_ip (struct sip_msg *msg, char *oldip, char *newip)
 	len = strlen (newip);
 
 	/* try to use pre-compiled expressions */
-	need_to_deallocate = 0;
+	needToDealocate = 0;
 	if (ipExpression != NULL)
 		{
 		re = ipExpression;
@@ -367,7 +366,7 @@ sdp_mangle_ip (struct sip_msg *msg, char *oldip, char *newip)
 				LM_ERR("unable to allocate re in pkg mem\n");
 				return -7;
 				}
-			need_to_deallocate = 1;
+			needToDealocate = 1;
 			if ((regcomp (re, key, REG_EXTENDED)) != 0)
 				{
 				LM_ERR("unable to compile %s \n",key);
@@ -469,10 +468,10 @@ continue2:
 		begin = begin + pmatch.rm_eo;
 
 	}			/* while */
-	if (need_to_deallocate)
+	if (needToDealocate)
 	{
-		regfree (re);		/* if I am going to use pre-compiled expressions to be removed */
-		pkg_free(re);
+	regfree (re);		/* if I am going to use pre-compiled expressions to be removed */
+	pkg_free(re);
 #ifdef DEBUG
 		fprintf(stdout,"Deallocating expression for ip ...\n");
 #endif
@@ -480,8 +479,8 @@ continue2:
 
 	if (diff != 0)
 	{
-		new_content_length = old_content_length + diff;
-		patch_content_length (msg, new_content_length);
+		newContentLength = oldContentLength + diff;
+		patch_content_length (msg, newContentLength);
 	}
 
 #ifdef DEBUG

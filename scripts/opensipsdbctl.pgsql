@@ -50,14 +50,8 @@ if [ -z "$DBROOTUSER" ]; then
 	fi
 fi
 
-if ! [ -z "$DBPORT" ]; then
-	PORT_OPT="-p$DBPORT"
-else
-	PORT_OPT=
-fi
-
-CMD="psql -q -h $DBHOST $PORT_OPT -U $DBROOTUSER "
-DUMP_CMD="pg_dump -h $DBHOST $PORT_OPT -U $DBROOTUSER -c"
+CMD="psql -q -h $DBHOST -U $DBROOTUSER "
+DUMP_CMD="pg_dump -h $DBHOST -U $DBROOTUSER -c"
 #################################################################
 
 

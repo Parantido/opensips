@@ -134,7 +134,6 @@
 
 /* action keywords */
 FORWARD	forward
-ASSERT	"assert"
 DROP	"drop"
 EXIT	"exit"
 RETURN	"return"
@@ -281,8 +280,6 @@ SCRIPTVAR_START	"$"
 
 /* config vars. */
 DEBUG	debug
-ENABLE_ASSERTS	enable_asserts
-ABORT_ON_ASSERT	abort_on_assert
 FORK	fork
 LOGSTDERROR	log_stderror
 LOGFACILITY	log_facility
@@ -452,7 +449,6 @@ IMPORTFILE      "import_file"
 <INITIAL>{EAT_ABLE}	{ count(); }
 
 <INITIAL>{FORWARD}	{count(); yylval.strval=yytext; return FORWARD; }
-<INITIAL>{ASSERT}	{count(); yylval.strval=yytext; return ASSERT; }
 <INITIAL>{DROP}	{ count(); yylval.strval=yytext; return DROP; }
 <INITIAL>{EXIT}	{ count(); yylval.strval=yytext; return EXIT; }
 <INITIAL>{RETURN}	{ count(); yylval.strval=yytext; return RETURN; }
@@ -584,8 +580,6 @@ IMPORTFILE      "import_file"
 <INITIAL>{MYSELF}	{ count(); yylval.strval=yytext; return MYSELF; }
 
 <INITIAL>{DEBUG}	{ count(); yylval.strval=yytext; return DEBUG; }
-<INITIAL>{ENABLE_ASSERTS}	{ count(); yylval.strval=yytext; return ENABLE_ASSERTS; }
-<INITIAL>{ABORT_ON_ASSERT}	{ count(); yylval.strval=yytext; return ABORT_ON_ASSERT; }
 <INITIAL>{FORK}		{ count(); yylval.strval=yytext; return FORK; }
 <INITIAL>{LOGSTDERROR}	{ yylval.strval=yytext; return LOGSTDERROR; }
 <INITIAL>{LOGFACILITY}	{ yylval.strval=yytext; return LOGFACILITY; }

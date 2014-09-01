@@ -93,15 +93,6 @@ static cmd_export_t cmds[]={
 	{0,0,0,0,0,0}
 };
 
-static dep_export_t deps = {
-	{ /* OpenSIPS module dependencies */
-		{ MOD_TYPE_DEFAULT, "tm", DEP_ABORT },
-		{ MOD_TYPE_NULL, NULL, 0 },
-	},
-	{ /* modparam dependencies */
-		{ NULL, NULL },
-	},
-};
 
 static param_export_t params[]={
 	{"networks",        STR_PARAM, &networks_config },
@@ -118,10 +109,8 @@ static param_export_t params[]={
 
 struct module_exports exports= {
 	"sms",
-	MOD_TYPE_DEFAULT,/* class of this module */
 	MODULE_VERSION,
 	DEFAULT_DLFLAGS, /* dlopen flags */
-	&deps,           /* OpenSIPS module dependencies */
 	cmds,
 	params,
 	0,          /* exported statistics */
@@ -508,7 +497,7 @@ int parse_config_lines(void)
 
 	return 0;
 parse_error:
-	LM_ERR("SMS %s config: parse error before chr %d [%.*s]\n",
+	LM_ERR("SMS %s config: parse error before  chr %d [%.*s]\n",
 		(step==1)?"modems":(step==2?"networks":"links"),
 		(int)(p - ((step==1)?modems_config:
 				   (step==2?networks_config:links_config))),

@@ -12,4 +12,3 @@ CREATE TABLE dialplan (
     attrs VARCHAR(32) NOT NULL
 );
 
-ALTER SEQUENCE dialplan_id_seq MAXVALUE 2147483647 CYCLE;

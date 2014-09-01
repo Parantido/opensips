@@ -9,6 +9,5 @@ CREATE TABLE domainpolicy (
     CONSTRAINT domainpolicy_rav_idx UNIQUE (rule, att, val)
 );
 
-ALTER SEQUENCE domainpolicy_id_seq MAXVALUE 2147483647 CYCLE;
 CREATE INDEX domainpolicy_rule_idx ON domainpolicy (rule);
 

@@ -251,7 +251,7 @@ errorx:
  */
 int msg_list_check(msg_list ml)
 {
-	msg_list_el p0,p1;
+	msg_list_el p0;
 
 	if(!ml)
 		goto errorx;
@@ -278,8 +278,6 @@ int msg_list_check(msg_list ml)
 			if(!ml->nrsent)
 				ml->lsent = NULL;
 
-			p1 = p0->next;
-
 			if(ml->ldone)
 				(ml->ldone)->prev = p0;
 			p0->next = ml->ldone;
@@ -288,13 +286,6 @@ int msg_list_check(msg_list ml)
 
 			ml->ldone = p0;
 			ml->nrdone++;
-
-			if (!p1)
-				break;
-			else {
-				p0 = p1;
-				continue;
-			}
 		}
 		p0 = p0->next;
 	}

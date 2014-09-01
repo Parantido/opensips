@@ -4,7 +4,6 @@
 
 
 <!ENTITY admin SYSTEM "cachedb_sql_admin.xml">
-<!ENTITY faq SYSTEM "cachedb_sql_faq.xml">
 
 <!-- Include general documentation entities -->
 <!ENTITY % docentities SYSTEM "../../../doc/entities.xml">
@@ -44,8 +43,6 @@
 <toc></toc>
 
 &admin;
-&faq;
-
 
 </book>
 

@@ -37,8 +37,7 @@ struct cachedb_id {
 	char* host;          /**< Host or IP, case insensitive */
 	unsigned short port; /**< Port number */
 	char* database;      /**< Database, case sensitive */
-	char* initial_url;   /**< Initial full URL */
-	int flags;           /**< Flags for signaling various events */
+	int flags;			 /**< Flags for signaling various events */
 };
 
 #define CACHEDB_ID_NO_URL (1<<0)

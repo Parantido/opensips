@@ -43,7 +43,6 @@ struct acc_enviroment {
 	struct hdr_field *to;
 	str text;
 	time_t ts;
-  event_id_t event;
 };
 
 /* param trasnporter*/

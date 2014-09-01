@@ -1,13 +1,12 @@
 INSERT INTO version (table_name, table_version) values ('cc_flows','1');
 CREATE TABLE cc_flows (
-    id NUMBER(10) PRIMARY KEY,
-    flowid VARCHAR2(64),
+    id NUMBER(10),
+    flowid VARCHAR2(64) PRIMARY KEY,
     priority NUMBER(10) DEFAULT 256 NOT NULL,
     skill VARCHAR2(64),
     prependcid VARCHAR2(32),
     message_welcome VARCHAR2(128) DEFAULT NULL,
-    message_queue VARCHAR2(128),
-    CONSTRAINT cc_flows_unique_flowid  UNIQUE (flowid)
+    message_queue VARCHAR2(128)
 );
 
 CREATE OR REPLACE TRIGGER cc_flows_tr
@@ -20,13 +19,11 @@ BEGIN map2users('cc_flows'); END;
 /
 INSERT INTO version (table_name, table_version) values ('cc_agents','1');
 CREATE TABLE cc_agents (
-    id NUMBER(10) PRIMARY KEY,
-    agentid VARCHAR2(128),
+    id NUMBER(10),
+    agentid VARCHAR2(128) PRIMARY KEY,
     location VARCHAR2(128),
     logstate NUMBER(10) DEFAULT 0 NOT NULL,
-    skills VARCHAR2(255),
-    last_call_end NUMBER(10) DEFAULT 0 NOT NULL,
-    CONSTRAINT cc_agents_unique_agentid  UNIQUE (agentid)
+    skills VARCHAR2(512)
 );
 
 CREATE OR REPLACE TRIGGER cc_agents_tr
@@ -48,8 +45,8 @@ CREATE TABLE cc_cdrs (
     flow_id VARCHAR2(128),
     agent_id VARCHAR2(128) DEFAULT NULL,
     call_type NUMBER(10) DEFAULT -1 NOT NULL,
-    rejected NUMBER(10) DEFAULT 0 NOT NULL,
-    fstats NUMBER(10) DEFAULT 0 NOT NULL,
+    call_type NUMBER(10) DEFAULT 0 NOT NULL,
+    call_type NUMBER(10) DEFAULT 0 NOT NULL,
     cid NUMBER(10) DEFAULT 0
 );
 
@@ -60,29 +57,4 @@ BEGIN
 END cc_cdrs_tr;
 /
 BEGIN map2users('cc_cdrs'); END;
-/
-CREATE TABLE cc_calls (
-    id NUMBER(10),
-    state NUMBER(10),
-    ig_cback NUMBER(10),
-    no_rej NUMBER(10),
-    setup_time NUMBER(10),
-    eta NUMBER(10),
-    last_start NUMBER(10),
-    recv_time NUMBER(10),
-    caller_dn VARCHAR2(128),
-    caller_un VARCHAR2(128),
-    b2buaid VARCHAR2(128) PRIMARY KEY DEFAULT '',
-    flow VARCHAR2(128),
-    agent VARCHAR2(128),
-    CONSTRAINT cc_calls_unique_id  UNIQUE (id)
-);
-
-CREATE OR REPLACE TRIGGER cc_calls_tr
-before insert on cc_calls FOR EACH ROW
-BEGIN
-  auto_id(:NEW.id);
-END cc_calls_tr;
-/
-BEGIN map2users('cc_calls'); END;
 /

@@ -66,7 +66,7 @@ int bind_data_loader(const char * source, route_data_load_func_t * api){
 			return -1;
 		}
 		if(fs.st_mode & S_IWOTH){
-			LM_WARN("insecure file permissions, routing data is world writable");
+			LM_WARN("insecure file permissions, routing data is world writeable");
 		}
 		if( !( fs.st_mode & S_IWOTH) &&
 			!((fs.st_mode & S_IWGRP) && (fs.st_gid == getegid())) &&

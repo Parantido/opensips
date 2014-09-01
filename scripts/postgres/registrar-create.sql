@@ -20,4 +20,3 @@ CREATE TABLE aliases (
     CONSTRAINT aliases_alias_idx UNIQUE (username, domain, contact, callid)
 );
 
-ALTER SEQUENCE aliases_id_seq MAXVALUE 2147483647 CYCLE;

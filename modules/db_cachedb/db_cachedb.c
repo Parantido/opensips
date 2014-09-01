@@ -60,32 +60,20 @@ static param_export_t params[] = {
 	{0, 0, 0}
 };
 
-static dep_export_t deps = {
-	{ /* OpenSIPS module dependencies */
-		{ MOD_TYPE_CACHEDB, NULL, DEP_SILENT },
-		{ MOD_TYPE_NULL, NULL, 0 },
-	},
-	{ /* modparam dependencies */
-		{ NULL, NULL },
-	},
-};
-
 struct module_exports exports = {
 	"db_cachedb",
-	MOD_TYPE_SQLDB,  /* class of this module */
 	MODULE_VERSION,
-	DEFAULT_DLFLAGS, /* dlopen flags */
-	&deps,           /* OpenSIPS module dependencies */
+	DEFAULT_DLFLAGS,            /* dlopen flags */
 	cmds,
-	params,          /* module parameters */
-	0,               /* exported statistics */
-	0,               /* exported MI functions */
-	0,               /* exported pseudo-variables */
-	0,               /* extra processes */
-	mod_init,        /* module initialization function */
-	0,               /* response function*/
-	destroy,         /* destroy function */
-	0                /* per-child init function */
+	params,                     /* module parameters */
+	0,                          /* exported statistics */
+	0,                          /* exported MI functions */
+	0,                          /* exported pseudo-variables */
+	0,                          /* extra processes */
+	mod_init,                   /* module initialization function */
+	0,                          /* response function*/
+	destroy,                    /* destroy function */
+	0                           /* per-child init function */
 };
 
 
